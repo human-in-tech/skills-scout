@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Postings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="#">Chat Support</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+    </nav>
+    <header>
+        <h1>Job Postings for <span id="skill-name"></span></h1>
+    </header>
+    <div id="job-postings">
+        <!-- Job postings will be loaded here -->
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const skill = urlParams.get('skill');
+            document.getElementById('skill-name').textContent = skill;
+
+            fetch(`/api/job_postings?skill=${encodeURIComponent(skill)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const postingsContainer = document.getElementById('job-postings');
+                    data.forEach(posting => {
+                        const postingElement = document.createElement('div');
+                        postingElement.className = 'job-posting';
+                        postingElement.innerHTML = `
+                            <h2>${posting.title}</h2>
+                            <p>${posting.company}</p>
+                            <p>${posting.location}</p>
+                            <a href="${posting.link}" target="_blank">View Job</a>
+                        `;
+                        postingsContainer.appendChild(postingElement);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>
